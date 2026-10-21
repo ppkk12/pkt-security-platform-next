@@ -1,0 +1,3 @@
+# Sample Python requirements with vulnerable dependency
+requests==2.25.0
+urllib3==1.26.4

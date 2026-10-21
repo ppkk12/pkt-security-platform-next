@@ -1,0 +1,7 @@
+# Gitleaks ignore file
+# Documentation sample tokens
+docs/api-spec.md:generic-api-key:28
+docs/api-spec.md:generic-api-key:53
+# Build artifacts
+src/PktSecurity.Web/.next/prerender-manifest.json:generic-api-key:1
+src/PktSecurity.Web/.next/server/server-reference-manifest.json:generic-api-key:1

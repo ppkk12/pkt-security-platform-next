@@ -1,0 +1,9 @@
+# Semgrep ignore
+bin/
+obj/
+node_modules/
+.next/
+out/
+TestResults/
+*.trx
+samples/sample-vulnerable-repo/

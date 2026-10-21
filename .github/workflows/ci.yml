@@ -1,0 +1,105 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-build-test:
+    name: Backend Build, Layer Architecture & Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: pktsecurity
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Solution (with Architecture Warnings as Errors)
+        run: dotnet build --configuration Release --no-restore -warnaserror
+
+      - name: Run Unit & Architecture Tests
+        run: dotnet test tests/PktSecurity.UnitTests --configuration Release --no-build --logger "trx;LogFileName=unit_tests.trx"
+
+      - name: Run Integration & Security Tests
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=pktsecurity;Username=postgres;Password=postgres"
+        run: dotnet test tests/PktSecurity.IntegrationTests --configuration Release --no-build --logger "trx;LogFileName=integration_tests.trx"
+
+  frontend-build:
+    name: Frontend Typecheck & Production Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: src/PktSecurity.Web/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: src/PktSecurity.Web
+        run: npm ci
+
+      - name: Typecheck & Production Build
+        working-directory: src/PktSecurity.Web
+        run: npm run build
+
+  dogfooding-security-scan:
+    name: Self-Dogfooding Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks Secret Detection
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: NuGet Vulnerability Check
+        run: dotnet list package --vulnerable --include-transitive
+
+      - name: Generate CycloneDX SBOM (Dogfooding)
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: dogfooding-sbom.json
+        continue-on-error: true

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-PktSecurity.Worker-efe77e46-1c06-4899-9b04-3a0f1b11b4dd</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PktSecurity.Application\PktSecurity.Application.csproj" />
+    <ProjectReference Include="..\PktSecurity.Infrastructure\PktSecurity.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

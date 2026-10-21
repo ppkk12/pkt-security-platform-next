@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PktSecurity.Domain\PktSecurity.Domain.csproj" />
+    <ProjectReference Include="..\..\src\PktSecurity.Application\PktSecurity.Application.csproj" />
+    <ProjectReference Include="..\..\src\PktSecurity.Infrastructure\PktSecurity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\PktSecurity.Worker\PktSecurity.Worker.csproj" />
+    <ProjectReference Include="..\..\src\PktSecurity.Api\PktSecurity.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.11" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
