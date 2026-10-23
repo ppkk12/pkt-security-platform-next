@@ -9,6 +9,10 @@ namespace PktSecurity.UnitTests;
 
 public class SecurityArchitectureTests
 {
+    /// <summary>
+    /// Verifies that archive extraction throws a security exception when an entry path
+    /// attempts to traverse outside the destination directory.
+    /// </summary>
     [Fact]
     public async Task ZipSlip_WhenArchiveContainsTraversalPath_MustThrowSecurityViolationException()
     {
@@ -69,6 +73,10 @@ public class SecurityArchitectureTests
         }
     }
 
+    /// <summary>
+    /// Verifies that argument validation blocks CLI flag overrides and shell control syntax.
+    /// </summary>
+    /// <param name="maliciousInput">An untrusted string containing dangerous git flags or shell commands.</param>
     [Theory]
     [InlineData("--upload-pack=evil.sh")]
     [InlineData("-oProxyCommand=evil")]
