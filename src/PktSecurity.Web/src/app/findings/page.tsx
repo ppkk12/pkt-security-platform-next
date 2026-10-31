@@ -45,6 +45,11 @@ function FindingsContent() {
   const [triageReason, setTriageReason] = useState('');
   const [triaging, setTriaging] = useState(false);
 
+  /**
+   * Fetches paginated findings using current filter criteria and updates table state.
+   *
+   * @param cursor - Keyset cursor indicating the starting position for the page fetch.
+   */
   const fetchFindings = async (cursor?: string) => {
     setLoading(true);
     setError(null);
@@ -98,6 +103,12 @@ function FindingsContent() {
     }
   };
 
+  /**
+   * Submits a status update request for the active finding and refreshes list data.
+   * Requires a non-empty audit reason string before sending API requests.
+   *
+   * @param e - Form submission event to prevent default browser navigation.
+   */
   const handleTriageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!triageFinding) return;
