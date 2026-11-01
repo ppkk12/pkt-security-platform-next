@@ -18,6 +18,17 @@ import {
 import { api } from '@/lib/api';
 import { Project, ProjectDependencyDto, VexStatementDto, SbomRescanResultDto } from '@/lib/types';
 
+/** SBOMエクスポート形式の定義 */
+export type SbomExportFormat = 'sarif' | 'cyclonedx' | 'meti' | 'csv' | 'json';
+
+/** OpenVEX登録フォームのリクエストデータ構造 */
+export interface VexRegisterFormInput {
+  vulnerabilityId: string;
+  packagePurl?: string;
+  status: string;
+  justification: string;
+  impactStatement: string;
+}
 export default function SbomPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
