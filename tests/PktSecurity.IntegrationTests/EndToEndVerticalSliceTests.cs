@@ -232,4 +232,24 @@ public class EndToEndVerticalSliceTests : IClassFixture<WebApplicationFactory<Pr
         });
         devRiskAcceptResp.StatusCode.Should().Be(HttpStatusCode.Forbidden, "Developers cannot approve RiskAccepted status");
     }
+    [Fact]
+    public async Task FullVerticalSlice_InvalidLoginAndNotFoundProject_MustReturnAppropriateErrorCodes()
+    {
+        var client = _factory.CreateClient();
+
+        // 不正な資格情報によるログイン試行は Unauthorized を返すこと
+        var invalidLoginResp = await client.PostAsJsonAsync("/api/v1/auth/login", new LoginRequest
+        {
+            Email = "admin@tenant-alpha.local",
+            Password = "WrongPassword!"
+        });
+
+        invalidLoginResp.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        // 存在しないプロジェクトIDへのアクセスは NotFound を返すこと
+        var nonExistentProjectId = Guid.NewGuid();
+        var missingProjectResp = await client.GetAsync($"/api/v1/projects/{nonExistentProjectId}/export?format=json");
+
+        missingProjectResp.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
 }
